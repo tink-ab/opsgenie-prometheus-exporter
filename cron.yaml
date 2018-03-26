@@ -1,0 +1,5 @@
+cron:
+- description: "expire old counters"
+  url: /cron/expire-old-counters
+  schedule: every 24 hours
+  target: worker

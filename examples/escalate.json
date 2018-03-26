@@ -1,0 +1,26 @@
+{
+    "action": "Escalate",
+    "alert": {
+        "alertId": "4cd9644b-1048-4c94-a7e7-79e37d88da8d-1522010706477",
+        "teams": [
+            "4a6027e2-5a07-4ff5-a949-aef37551dff9"
+        ]
+    },
+    "source": {
+        "name": "",
+        "type": "system"
+    },
+    "integrationName": "Tink alert Prometheus exporter",
+    "integrationId": "6e01136a-3ef2-4036-b0d1-73a9531e4268",
+    "integrationType": "Webhook",
+    "escalationId": "2732b06a-424b-4314-802c-81fe3b9fbd2c",
+    "escalationName": "backend_escalation",
+    "escalationTime": 0,
+    "repeatCount": 0,
+    "escalationNotify": {
+        "entity": "schedule",
+        "id": "df332c2b-dd61-411f-af22-330c225992b1",
+        "type": "default",
+        "name": "backend_schedule"
+    }
+}

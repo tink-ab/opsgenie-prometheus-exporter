@@ -1,0 +1,6 @@
+# A counter of the number of actions for a specific alert type sent to us by OpsGenie.
+# HELP opsgenie_actions A counter of the number of actions by alert type.
+# TYPE opsgenie_actions counter
+tink_alert_stats_actions_total{jenskey="jensvalue",action="Close"} 0
+tink_alert_stats_actions_total{jenskey="jensvalue",action="Create"} 1
+tink_alert_stats_actions_total{jenskey="jensvalue",action="Escalate"} 2
