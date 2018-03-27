@@ -1,7 +1,8 @@
 #!/bin/bash
 set -eu
 
-dev_appserver.py app.yaml --clear_datastore True &
+DATASTORE=$(mktemp)
+dev_appserver.py app.yaml --datastore_path $DATASTORE &
 
 for i in `seq 1 10`;do
     echo "Waiting for testserver to come up..."
@@ -30,4 +31,4 @@ echo TEMPFILE: $TEMPFILE
 # Poor man's assertion:
 diff $TEMPFILE examples/expected_output.txt && echo "TESTS PASSED" || echo "TESTS FAILED"
 rm $TEMPFILE
-
+rm -fr $DATASTORE
