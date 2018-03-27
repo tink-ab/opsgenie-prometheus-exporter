@@ -2,8 +2,6 @@ from functools import wraps
 
 from flask import request, Response
 
-import models
-
 
 def check_auth(username, password):
     """This function is called to check if a username /

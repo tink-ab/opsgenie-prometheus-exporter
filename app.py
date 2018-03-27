@@ -1,18 +1,13 @@
 import datetime
-import logging
-import uuid
 
 # https://github.com/jschneier/django-storages/issues/281#issuecomment-288377616
 import tempfile
 tempfile.SpooledTemporaryFile = tempfile.TemporaryFile
 
-from flask import Flask, render_template, abort, redirect, url_for, jsonify, request, make_response, Response
+from flask import Flask, abort, jsonify, request, Response
 from flask_api import status
-from jinja2 import Template
 
-from google.appengine.api import users, taskqueue
 from google.appengine.ext import ndb
-from google.appengine.datastore.datastore_query import Cursor
 
 import models
 import decorators

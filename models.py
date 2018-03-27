@@ -1,7 +1,4 @@
-from datetime import datetime, timedelta
-
 from google.appengine.ext import ndb
-from google.appengine.api import taskqueue
 
 import hashlib
 
