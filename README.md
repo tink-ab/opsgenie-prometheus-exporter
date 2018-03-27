@@ -19,7 +19,7 @@ First do
 
     gcloud init
 
-, select your Github account and your GCP project, then execute
+, select your Github account and your GCP project, update secrets in `decorators.py`, then execute
 
     gcloud app deploy *.yaml
 
@@ -32,7 +32,3 @@ Execute
     ./test.sh
 
 for a basic system test.
-
-Notes on putting this to production
------------------------------------
- * Make sure to set OpsGenie secret in `settings.py`.
