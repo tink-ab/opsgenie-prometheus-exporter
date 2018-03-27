@@ -41,7 +41,8 @@ def submit_opsgenie():
         m = models.UniqueAlert.get_by_id(alertid)
 
     alerttype = models.AlertType.get_or_insert_by_tags(m.tags)
-    alerttype.incr(action)
+    timediff = datetime.datetime.now() - m.created if datetime.datetime.now() > m.created else datetime.timedelta(seconds=0)
+    alerttype.incr(action, timediff)
 
     if action == 'Close':
         # Expect no more events to happen to an alert after a Close.
@@ -58,14 +59,24 @@ def scrape():
         for alerttype in models.AlertType.query():
             for counter in alerttype.get_counters():
                 if not header_sent:
-                    yield "# A counter of the number of actions for a specific alert type sent to us by OpsGenie.\n"
-                    yield "# HELP tink_alert_stats_actions_total A counter of the number of actions by alert type.\n"
-                    yield "# TYPE tink_alert_stats_actions_total counter\n"
+                    yield "# A timer histogram of how many seconds since creation of an alert.\n"
+                    yield "# HELP tink_alert_stats_action_since_created_seconds A histogram of the number of seconds an action happened since Created OpsGenie event.\n"
+                    yield "# TYPE tink_alert_stats_action_since_created_seconds histogram\n"
                     header_sent = True
 
-                yield "tink_alert_stats_actions_total{"
+                yield "tink_alert_stats_action_since_created_seconds_count{"
                 yield ",".join(['{0}="{1}"'.format(k, v) for k, v in alerttype.tags.items()])
                 yield ',action="{0}"}} {1}\n'.format(counter.action, counter.value)
+
+                yield "tink_alert_stats_action_since_created_seconds_sum{"
+                yield ",".join(['{0}="{1}"'.format(k, v) for k, v in alerttype.tags.items()])
+                yield ',action="{0}"}} {1}\n'.format(counter.action, counter.sum)
+
+                for bucket in counter.since_created_buckets:
+                    yield "tink_alert_stats_action_since_created_seconds_bucket{"
+                    yield ",".join(['{0}="{1}"'.format(k, v) for k, v in alerttype.tags.items()])
+                    yield ',action="{0}",le="{1}"}} {2}\n'.format(counter.action, "+Inf" if bucket.le==models.MAX_INT else bucket.le, bucket.value)
+
     return Response(generate(), mimetype='text/plain')
 
 
