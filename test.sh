@@ -29,6 +29,6 @@ wait %1
 echo TEMPFILE: $TEMPFILE
 
 # Poor man's assertion:
-diff $TEMPFILE examples/expected_output.txt && echo "TESTS PASSED" || echo "TESTS FAILED"
+diff examples/expected_output.txt $TEMPFILE && echo "TESTS PASSED" || echo "TESTS FAILED"
 rm $TEMPFILE
 rm -fr $DATASTORE
