@@ -43,11 +43,12 @@ class AlertType(ndb.Model):
         ndb.delete_multi(AlertTypeCounter.query(alerttype=key, keys_only=True))
 
     @ndb.transactional
-    def incr(self, action, duration_since_created):
+    def incr(self, action, duration_since_created, tags):
         counter = AlertTypeCounter.get_or_insert(self._counter_key(action),
                 alerttype=self.key,
                 action=action,
-                since_created_buckets=_create_hist_counter(DEFAULT_BUCKETS)
+                since_created_buckets=_create_hist_counter(DEFAULT_BUCKETS),
+                tags=tags,
         )
         counter.count += 1
         counter.sum += duration_since_created.seconds
@@ -84,4 +85,5 @@ class AlertTypeCounter(ndb.Model):
     count = ndb.IntegerProperty(default=0)
     alerttype = ndb.KeyProperty(kind=AlertType)
     since_created_buckets = ndb.LocalStructuredProperty(HistogramCounter, repeated=True)
+    tags = ndb.JsonProperty()
     sum = ndb.IntegerProperty(default=0)

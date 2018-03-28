@@ -38,7 +38,14 @@ def submit_opsgenie():
 
     alerttype = models.AlertType.get_or_insert_by_tags(m.tags)
     timediff = datetime.datetime.now() - m.created if datetime.datetime.now() > m.created else datetime.timedelta(seconds=0)
-    alerttype.incr(action, timediff)
+
+    counter_tags = {}
+    if action == 'Escalate':
+        counter_tags = {
+            'schedule': request.json['escalationNotify']['name'],
+        }
+
+    alerttype.incr(action, timediff, counter_tags)
 
     if action == 'Close':
         # Expect no more events to happen to an alert after a Close.
@@ -66,22 +73,30 @@ def scrape():
                 s += "# TYPE tink_alert_stats_action_since_created_seconds histogram\n"
                 header_sent = True
 
+            tags = merge_two_dicts(alerttype.tags, counter.tags)
+
             s += "tink_alert_stats_action_since_created_seconds_count{"
-            s += ",".join(['{0}="{1}"'.format(k, v) for k, v in alerttype.tags.items()])
+            s += ",".join(['{0}="{1}"'.format(k, v) for k, v in tags.items()])
             s += ',action="{0}"}} {1}\n'.format(counter.action, counter.count)
 
             s += "tink_alert_stats_action_since_created_seconds_sum{"
-            s += ",".join(['{0}="{1}"'.format(k, v) for k, v in alerttype.tags.items()])
+            s += ",".join(['{0}="{1}"'.format(k, v) for k, v in tags.items()])
             s += ',action="{0}"}} {1}\n'.format(counter.action, counter.sum)
 
             for bucket in counter.since_created_buckets:
                 s += "tink_alert_stats_action_since_created_seconds_bucket{"
-                s += ",".join(['{0}="{1}"'.format(k, v) for k, v in alerttype.tags.items()])
+                s += ",".join(['{0}="{1}"'.format(k, v) for k, v in tags.items()])
                 s += ',action="{0}",le="{1}"}} {2}\n'.format(counter.action, "+Inf" if bucket.le==models.MAX_INT else bucket.le, bucket.count)
 
     memcache.set('key', s, 3 * 3600)
 
     return Response(s, mimetype='text/plain')
+
+
+def merge_two_dicts(x, y):
+    z = x.copy()   # start with x's keys and values
+    z.update(y)    # modifies z with y's keys and values & returns None
+    return z
 
 
 MAX_ALERT_AGE_DAYS = 90
