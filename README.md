@@ -9,11 +9,12 @@ Authentication is done using basic auth.
 Getting Started
 ---------------
 
-First install [Google Cloud SDK](https://cloud.google.com/sdk/docs/), then fetch third-party dependencies:
+First install [Google Cloud SDK](https://cloud.google.com/sdk/docs/), then
+fetch third-party dependencies:
 
     pip install --target lib/ --requirement requirements.txt
 
-Start the development server:
+, then start the development server:
 
     dev_appserver.py app.yaml
 
@@ -23,7 +24,8 @@ First do
 
     gcloud init
 
-, select your Github account and your GCP project, update secrets in `decorators.py`, then execute
+, select your Github account and your GCP project, update secrets in
+`decorators.py`, then execute
 
     gcloud app deploy *.yaml
 
