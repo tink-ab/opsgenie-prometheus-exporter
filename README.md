@@ -11,7 +11,7 @@ First install [Google Cloud SDK](https://cloud.google.com/sdk/docs/), then fetch
 
 Start the development server:
 
-    dev_appserver.py app.yaml worker.yaml
+    dev_appserver.py app.yaml
 
 Deploying
 ---------
