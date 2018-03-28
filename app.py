@@ -61,7 +61,7 @@ def scrape():
 
                 yield "tink_alert_stats_action_since_created_seconds_count{"
                 yield ",".join(['{0}="{1}"'.format(k, v) for k, v in alerttype.tags.items()])
-                yield ',action="{0}"}} {1}\n'.format(counter.action, counter.value)
+                yield ',action="{0}"}} {1}\n'.format(counter.action, counter.count)
 
                 yield "tink_alert_stats_action_since_created_seconds_sum{"
                 yield ",".join(['{0}="{1}"'.format(k, v) for k, v in alerttype.tags.items()])
@@ -70,7 +70,7 @@ def scrape():
                 for bucket in counter.since_created_buckets:
                     yield "tink_alert_stats_action_since_created_seconds_bucket{"
                     yield ",".join(['{0}="{1}"'.format(k, v) for k, v in alerttype.tags.items()])
-                    yield ',action="{0}",le="{1}"}} {2}\n'.format(counter.action, "+Inf" if bucket.le==models.MAX_INT else bucket.le, bucket.value)
+                    yield ',action="{0}",le="{1}"}} {2}\n'.format(counter.action, "+Inf" if bucket.le==models.MAX_INT else bucket.le, bucket.count)
 
     return Response(generate(), mimetype='text/plain')
 
