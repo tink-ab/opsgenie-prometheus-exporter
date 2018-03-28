@@ -1,6 +1,10 @@
 OpsGenie Prometheus Exporter
 ============================
-An Prometheus exporter that exports alert statistics. Statistics is being populated by receiving Webhooks from OpsGenie.
+An [AppEngine](https://cloud.google.com/appengine/) Prometheus exporter that
+exports alert statistics from OpsGenie. Statistics is being populated by
+receiving Webhooks from OpsGenie.
+
+Authentication is done using basic auth.
 
 Getting Started
 ---------------
