@@ -20,6 +20,7 @@ do
 done
 
 TEMPFILE=$(mktemp)
+curl -H 'Authorization: Basic dGluazp0aW5r' -H 'Content-type: application/json' http://localhost:8080/metrics > /dev/null
 curl -H 'Authorization: Basic dGluazp0aW5r' -H 'Content-type: application/json' http://localhost:8080/metrics > $TEMPFILE
 kill %1
 wait %1

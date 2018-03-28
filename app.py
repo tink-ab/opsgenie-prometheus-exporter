@@ -7,6 +7,7 @@ tempfile.SpooledTemporaryFile = tempfile.TemporaryFile
 from flask import Flask, abort, jsonify, request, Response
 from flask_api import status
 
+from google.appengine.api import memcache
 from google.appengine.ext import ndb
 
 import models
@@ -43,36 +44,44 @@ def submit_opsgenie():
         # Expect no more events to happen to an alert after a Close.
         m.key.delete()
 
+    memcache.delete('key')
+
     return jsonify({})
 
 
 @app.route('/metrics', methods=['GET'])
 @decorators.requires_auth
 def scrape():
-    def generate():
-        header_sent = False
-        for alerttype in models.AlertType.query():
-            for counter in alerttype.get_counters():
-                if not header_sent:
-                    yield "# A timer histogram of how many seconds since creation of an alert.\n"
-                    yield "# HELP tink_alert_stats_action_since_created_seconds A histogram of the number of seconds an action happened since Created OpsGenie event.\n"
-                    yield "# TYPE tink_alert_stats_action_since_created_seconds histogram\n"
-                    header_sent = True
+    s = memcache.get('key')
+    if s is not None:
+        return Response(s, mimetype='text/plain')
 
-                yield "tink_alert_stats_action_since_created_seconds_count{"
-                yield ",".join(['{0}="{1}"'.format(k, v) for k, v in alerttype.tags.items()])
-                yield ',action="{0}"}} {1}\n'.format(counter.action, counter.count)
+    s = ""
+    header_sent = False
+    for alerttype in models.AlertType.query():
+        for counter in alerttype.get_counters():
+            if not header_sent:
+                s += "# A timer histogram of how many seconds since creation of an alert.\n"
+                s += "# HELP tink_alert_stats_action_since_created_seconds A histogram of the number of seconds an action happened since Created OpsGenie event.\n"
+                s += "# TYPE tink_alert_stats_action_since_created_seconds histogram\n"
+                header_sent = True
 
-                yield "tink_alert_stats_action_since_created_seconds_sum{"
-                yield ",".join(['{0}="{1}"'.format(k, v) for k, v in alerttype.tags.items()])
-                yield ',action="{0}"}} {1}\n'.format(counter.action, counter.sum)
+            s += "tink_alert_stats_action_since_created_seconds_count{"
+            s += ",".join(['{0}="{1}"'.format(k, v) for k, v in alerttype.tags.items()])
+            s += ',action="{0}"}} {1}\n'.format(counter.action, counter.count)
 
-                for bucket in counter.since_created_buckets:
-                    yield "tink_alert_stats_action_since_created_seconds_bucket{"
-                    yield ",".join(['{0}="{1}"'.format(k, v) for k, v in alerttype.tags.items()])
-                    yield ',action="{0}",le="{1}"}} {2}\n'.format(counter.action, "+Inf" if bucket.le==models.MAX_INT else bucket.le, bucket.count)
+            s += "tink_alert_stats_action_since_created_seconds_sum{"
+            s += ",".join(['{0}="{1}"'.format(k, v) for k, v in alerttype.tags.items()])
+            s += ',action="{0}"}} {1}\n'.format(counter.action, counter.sum)
 
-    return Response(generate(), mimetype='text/plain')
+            for bucket in counter.since_created_buckets:
+                s += "tink_alert_stats_action_since_created_seconds_bucket{"
+                s += ",".join(['{0}="{1}"'.format(k, v) for k, v in alerttype.tags.items()])
+                s += ',action="{0}",le="{1}"}} {2}\n'.format(counter.action, "+Inf" if bucket.le==models.MAX_INT else bucket.le, bucket.count)
+
+    memcache.set('key', s, 3 * 3600)
+
+    return Response(s, mimetype='text/plain')
 
 
 MAX_ALERT_AGE_DAYS = 90
