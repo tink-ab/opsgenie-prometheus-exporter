@@ -1,5 +1,5 @@
-Tink Alert Stats
-================
+OpsGenie Prometheus Exporter
+============================
 An Prometheus exporter that exports alert statistics. Statistics is being populated by receiving Webhooks from OpsGenie.
 
 Getting Started
