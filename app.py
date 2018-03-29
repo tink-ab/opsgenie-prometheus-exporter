@@ -74,23 +74,26 @@ def scrape():
                 header_sent = True
 
             tags = merge_two_dicts(alerttype.tags, counter.tags)
+            tags['action'] = counter.action
 
-            s += "tink_alert_stats_action_since_created_seconds_count{"
-            s += ",".join(['{0}="{1}"'.format(k, v) for k, v in tags.items()])
-            s += ',action="{0}"}} {1}\n'.format(counter.action, counter.count)
-
-            s += "tink_alert_stats_action_since_created_seconds_sum{"
-            s += ",".join(['{0}="{1}"'.format(k, v) for k, v in tags.items()])
-            s += ',action="{0}"}} {1}\n'.format(counter.action, counter.sum)
+            s += build_metric("tink_alert_stats_action_since_created_seconds_count", tags, counter.count)
+            s += build_metric("tink_alert_stats_action_since_created_seconds_sum", tags, counter.sum)
 
             for bucket in counter.since_created_buckets:
-                s += "tink_alert_stats_action_since_created_seconds_bucket{"
-                s += ",".join(['{0}="{1}"'.format(k, v) for k, v in tags.items()])
-                s += ',action="{0}",le="{1}"}} {2}\n'.format(counter.action, "+Inf" if bucket.le==models.MAX_INT else bucket.le, bucket.count)
+                tags['le'] = "+Inf" if bucket.le==models.MAX_INT else bucket.le
+                s += build_metric("tink_alert_stats_action_since_created_seconds_bucket", tags, bucket.count)
 
     memcache.set('key', s, 3 * 3600)
 
     return Response(s, mimetype='text/plain')
+
+
+def build_metric(name, labels, value):
+    s = ""
+    s += "{0}{{".format(name)
+    s += ",".join(['{0}="{1}"'.format(k, v) for k, v in labels.items()])
+    s += '}} {0}\n'.format(value)
+    return s
 
 
 def merge_two_dicts(x, y):
