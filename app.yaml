@@ -3,6 +3,10 @@ api_version: 1
 threadsafe: true
 
 handlers:
+- url: /tasks/.*
+  script: app.app
+  login: admin
+  secure: always
 - url: /cron/.*
   script: app.app
   login: admin

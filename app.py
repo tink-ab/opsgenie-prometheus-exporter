@@ -1,4 +1,7 @@
 import datetime
+import json
+import logging
+import time
 
 # https://github.com/jschneier/django-storages/issues/281#issuecomment-288377616
 import tempfile
@@ -7,7 +10,7 @@ tempfile.SpooledTemporaryFile = tempfile.TemporaryFile
 from flask import Flask, abort, jsonify, request, Response
 from flask_api import status
 
-from google.appengine.api import memcache
+from google.appengine.api import memcache, taskqueue
 from google.appengine.ext import ndb
 
 import models
@@ -26,6 +29,17 @@ def submit_opsgenie():
 
     if 'action' not in request.json:
         abort(status.HTTP_400_BAD_REQUEST)
+
+    return _handle_submission(datetime.datetime.now())
+
+
+@app.route('/tasks/submit', methods=['POST'])
+def delayed_submission():
+    now = datetime.datetime.fromtimestamp(float(request.headers['X-Now']))
+    return _handle_submission(now)
+
+
+def _handle_submission(now):
     action = request.json['action']
 
     alertid = request.json['alert']['alertId']
@@ -36,7 +50,7 @@ def submit_opsgenie():
     else:
         m = models.UniqueAlert.get_by_id(alertid)
 
-    alerttype = models.AlertType.get_or_insert_by_tags(m.tags)
+    alerttype, created = models.AlertType.get_or_insert_by_tags(m.tags)
     timediff = datetime.datetime.now() - m.created if datetime.datetime.now() > m.created else datetime.timedelta(seconds=0)
 
     counter_tags = {}
@@ -45,7 +59,20 @@ def submit_opsgenie():
             'schedule': request.json['escalationNotify']['name'],
         }
 
-    alerttype.incr(action, timediff, counter_tags)
+    alerttype.incr(action, timediff, counter_tags, only_create=created)
+    if created:
+        taskqueue.add(
+            url='/tasks/submit',
+            headers={
+                'Content-Type': 'application/json',
+                'X-Now': str(time.mktime(now.timetuple())),
+            },
+            payload=json.dumps(request.json),
+            # A duration of which we can be certain the Prometheus has scraped
+            # the zero valued counter. See
+            # https://github.com/prometheus/prometheus/issues/3886#issuecomment-368349640
+            countdown=40,
+        )
 
     if action == 'Close':
         # Expect no more events to happen to an alert after a Close.

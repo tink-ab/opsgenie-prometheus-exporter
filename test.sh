@@ -19,6 +19,8 @@ do
     curl -H 'Authorization: Basic dGluazp0aW5r' -d @examples/${inputfile} -H 'Content-type: application/json' http://localhost:8080/webhook/opsgenie
 done
 
+sleep 50
+
 TEMPFILE=$(mktemp)
 curl -H 'Authorization: Basic dGluazp0aW5r' -H 'Content-type: application/json' http://localhost:8080/metrics > /dev/null
 curl -H 'Authorization: Basic dGluazp0aW5r' -H 'Content-type: application/json' http://localhost:8080/metrics > $TEMPFILE
