@@ -16,11 +16,11 @@ fi
 
 for inputfile in {create,escalate,escalate,close}.json
 do
-    curl -H 'Authorization: Basic bXl1c2VybmFtZTpteXBhc3N3b3Jk' -d @examples/${inputfile} -H 'Content-type: application/json' http://localhost:8080/webhook/opsgenie
+    curl --silent -H 'Authorization: Basic bXl1c2VybmFtZTpteXBhc3N3b3Jk' -d @examples/${inputfile} -H 'Content-type: application/json' http://localhost:8080/webhook/opsgenie > /dev/null
 done
 
 TEMPFILE=$(mktemp)
-curl -H 'Authorization: Basic bXl1c2VybmFtZTpteXBhc3N3b3Jk' -H 'Content-type: application/json' http://localhost:8080/metrics > $TEMPFILE
+curl --silent -H 'Authorization: Basic bXl1c2VybmFtZTpteXBhc3N3b3Jk' -H 'Content-type: application/json' http://localhost:8080/metrics > $TEMPFILE
 
 # Useful if changing output:
 #cp $TEMPFILE examples/expected_output_pre.txt
@@ -32,8 +32,8 @@ rm $TEMPFILE
 sleep 6
 
 TEMPFILE=$(mktemp)
-curl -H 'Authorization: Basic bXl1c2VybmFtZTpteXBhc3N3b3Jk' -H 'Content-type: application/json' http://localhost:8080/metrics > /dev/null
-curl -H 'Authorization: Basic bXl1c2VybmFtZTpteXBhc3N3b3Jk' -H 'Content-type: application/json' http://localhost:8080/metrics > $TEMPFILE
+curl --silent -H 'Authorization: Basic bXl1c2VybmFtZTpteXBhc3N3b3Jk' -H 'Content-type: application/json' http://localhost:8080/metrics > /dev/null
+curl --silent -H 'Authorization: Basic bXl1c2VybmFtZTpteXBhc3N3b3Jk' -H 'Content-type: application/json' http://localhost:8080/metrics > $TEMPFILE
 kill %1
 wait %1
 
