@@ -24,8 +24,8 @@ First do
 
     gcloud init
 
-, select your Github account and your GCP project, update secrets in
-`decorators.py`, then execute
+, select your Github account and your GCP project, update environment variables
+in `app.yaml`, then execute
 
     gcloud app deploy *.yaml
 

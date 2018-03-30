@@ -1,6 +1,10 @@
 runtime: python27
 api_version: 1
 threadsafe: true
+env_variables:
+  # HTTP Basic auth credentials used both by scraping and webhook.
+  BASIC_AUTH_USERNAME: myusername
+  BASIC_AUTH_PASSWORD: mypassword
 
 handlers:
 - url: /tasks/.*
