@@ -1,0 +1,37 @@
+# A timer histogram of how many seconds since creation of an alert.
+# HELP tink_alert_stats_action_since_created_seconds A histogram of the number of seconds an action happened since Created OpsGenie event.
+# TYPE tink_alert_stats_action_since_created_seconds histogram
+tink_alert_stats_action_since_created_seconds_count{action="Create",jenskey="jensvalue"} 0
+tink_alert_stats_action_since_created_seconds_sum{action="Create",jenskey="jensvalue"} 0
+tink_alert_stats_action_since_created_seconds_bucket{action="Create",jenskey="jensvalue",le="0"} 0
+tink_alert_stats_action_since_created_seconds_bucket{action="Create",jenskey="jensvalue",le="16"} 0
+tink_alert_stats_action_since_created_seconds_bucket{action="Create",jenskey="jensvalue",le="32"} 0
+tink_alert_stats_action_since_created_seconds_bucket{action="Create",jenskey="jensvalue",le="64"} 0
+tink_alert_stats_action_since_created_seconds_bucket{action="Create",jenskey="jensvalue",le="128"} 0
+tink_alert_stats_action_since_created_seconds_bucket{action="Create",jenskey="jensvalue",le="256"} 0
+tink_alert_stats_action_since_created_seconds_bucket{action="Create",jenskey="jensvalue",le="512"} 0
+tink_alert_stats_action_since_created_seconds_bucket{action="Create",jenskey="jensvalue",le="1024"} 0
+tink_alert_stats_action_since_created_seconds_bucket{action="Create",jenskey="jensvalue",le="2048"} 0
+tink_alert_stats_action_since_created_seconds_bucket{action="Create",jenskey="jensvalue",le="4096"} 0
+tink_alert_stats_action_since_created_seconds_bucket{action="Create",jenskey="jensvalue",le="8192"} 0
+tink_alert_stats_action_since_created_seconds_bucket{action="Create",jenskey="jensvalue",le="16384"} 0
+tink_alert_stats_action_since_created_seconds_bucket{action="Create",jenskey="jensvalue",le="32768"} 0
+tink_alert_stats_action_since_created_seconds_bucket{action="Create",jenskey="jensvalue",le="65536"} 0
+tink_alert_stats_action_since_created_seconds_bucket{action="Create",jenskey="jensvalue",le="+Inf"} 0
+tink_alert_stats_action_since_created_seconds_count{action="Escalate",jenskey="jensvalue",schedule="backend_schedule"} 2
+tink_alert_stats_action_since_created_seconds_sum{action="Escalate",jenskey="jensvalue",schedule="backend_schedule"} 0
+tink_alert_stats_action_since_created_seconds_bucket{action="Escalate",jenskey="jensvalue",le="0",schedule="backend_schedule"} 2
+tink_alert_stats_action_since_created_seconds_bucket{action="Escalate",jenskey="jensvalue",le="16",schedule="backend_schedule"} 2
+tink_alert_stats_action_since_created_seconds_bucket{action="Escalate",jenskey="jensvalue",le="32",schedule="backend_schedule"} 2
+tink_alert_stats_action_since_created_seconds_bucket{action="Escalate",jenskey="jensvalue",le="64",schedule="backend_schedule"} 2
+tink_alert_stats_action_since_created_seconds_bucket{action="Escalate",jenskey="jensvalue",le="128",schedule="backend_schedule"} 2
+tink_alert_stats_action_since_created_seconds_bucket{action="Escalate",jenskey="jensvalue",le="256",schedule="backend_schedule"} 2
+tink_alert_stats_action_since_created_seconds_bucket{action="Escalate",jenskey="jensvalue",le="512",schedule="backend_schedule"} 2
+tink_alert_stats_action_since_created_seconds_bucket{action="Escalate",jenskey="jensvalue",le="1024",schedule="backend_schedule"} 2
+tink_alert_stats_action_since_created_seconds_bucket{action="Escalate",jenskey="jensvalue",le="2048",schedule="backend_schedule"} 2
+tink_alert_stats_action_since_created_seconds_bucket{action="Escalate",jenskey="jensvalue",le="4096",schedule="backend_schedule"} 2
+tink_alert_stats_action_since_created_seconds_bucket{action="Escalate",jenskey="jensvalue",le="8192",schedule="backend_schedule"} 2
+tink_alert_stats_action_since_created_seconds_bucket{action="Escalate",jenskey="jensvalue",le="16384",schedule="backend_schedule"} 2
+tink_alert_stats_action_since_created_seconds_bucket{action="Escalate",jenskey="jensvalue",le="32768",schedule="backend_schedule"} 2
+tink_alert_stats_action_since_created_seconds_bucket{action="Escalate",jenskey="jensvalue",le="65536",schedule="backend_schedule"} 2
+tink_alert_stats_action_since_created_seconds_bucket{action="Escalate",jenskey="jensvalue",le="+Inf",schedule="backend_schedule"} 2
