@@ -91,7 +91,7 @@ def scrape():
 def build_metric(name, labels, value):
     s = ""
     s += "{0}{{".format(name)
-    s += ",".join(['{0}="{1}"'.format(k, v) for k, v in labels.items()])
+    s += ",".join(['{0}="{1}"'.format(k, v) for k, v in sorted(labels.items())])
     s += '}} {0}\n'.format(value)
     return s
 
