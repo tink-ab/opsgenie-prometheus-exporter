@@ -25,9 +25,7 @@ class AlertType(ndb.Model):
     @classmethod
     @ndb.transactional
     def get_or_insert_by_tags(cls, tags):
-        entity = cls.get_by_id(cls._key_from_tags(tags))
-        created = entity is None
-        return cls.get_or_insert(cls._key_from_tags(tags), tags=tags), created
+        return cls.get_or_insert(cls._key_from_tags(tags), tags=tags)
 
     @classmethod
     def expire_older_than(cls, date):
@@ -46,20 +44,25 @@ class AlertType(ndb.Model):
         ndb.delete_multi(AlertTypeCounter.query(alerttype=key, keys_only=True))
 
     @ndb.transactional
-    def incr(self, action, duration_since_created, tags, only_create):
-        counter = AlertTypeCounter.get_or_insert(self._counter_key(action),
-                alerttype=self.key,
-                action=action,
-                since_created_buckets=_create_hist_counter(DEFAULT_BUCKETS),
-                tags=tags,
-        )
-        if not only_create:
+    def incr(self, action, duration_since_created, tags):
+        key = self._counter_key(action)
+        counter = AlertTypeCounter.get_by_id(key)
+        should_create = counter is None
+        if should_create:
+            counter = AlertTypeCounter.get_or_insert(key,
+                    alerttype=self.key,
+                    action=action,
+                    since_created_buckets=_create_hist_counter(DEFAULT_BUCKETS),
+                    tags=tags,
+            )
+        else:
             counter.count += 1
             counter.sum += duration_since_created.seconds
             for bucket in counter.since_created_buckets:
                 if duration_since_created.seconds <= bucket.le:
                     bucket.count += 1
         counter.put()
+        return should_create
 
     def get_counters(self):
         return AlertTypeCounter.query(AlertTypeCounter.alerttype == self.key)

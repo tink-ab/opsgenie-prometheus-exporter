@@ -51,7 +51,7 @@ def _handle_submission(now):
     else:
         m = models.UniqueAlert.get_by_id(alertid)
 
-    alerttype, created = models.AlertType.get_or_insert_by_tags(m.tags)
+    alerttype = models.AlertType.get_or_insert_by_tags(m.tags)
     timediff = datetime.datetime.now() - m.created if datetime.datetime.now() > m.created else datetime.timedelta(seconds=0)
 
     counter_tags = {}
@@ -60,7 +60,7 @@ def _handle_submission(now):
             'schedule': request.json['escalationNotify']['name'],
         }
 
-    alerttype.incr(action, timediff, counter_tags, only_create=created)
+    created = alerttype.incr(action, timediff, counter_tags)
     if created:
         taskqueue.add(
             url='/tasks/submit',
