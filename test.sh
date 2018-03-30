@@ -2,7 +2,7 @@
 set -eu
 
 DATASTORE=$(mktemp)
-dev_appserver.py app.yaml --datastore_path $DATASTORE &
+dev_appserver.py --env_var PROMETHEUS_SCRAPE_PERIOD_SECONDS=0 app.yaml --datastore_path $DATASTORE &
 
 for i in `seq 1 10`;do
     echo "Waiting for testserver to come up..."
@@ -19,7 +19,7 @@ do
     curl -H 'Authorization: Basic bXl1c2VybmFtZTpteXBhc3N3b3Jk' -d @examples/${inputfile} -H 'Content-type: application/json' http://localhost:8080/webhook/opsgenie
 done
 
-sleep 50
+sleep 2
 
 TEMPFILE=$(mktemp)
 curl -H 'Authorization: Basic bXl1c2VybmFtZTpteXBhc3N3b3Jk' -H 'Content-type: application/json' http://localhost:8080/metrics > /dev/null
