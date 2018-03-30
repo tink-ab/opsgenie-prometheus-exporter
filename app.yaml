@@ -1,9 +1,12 @@
 runtime: python27
 api_version: 1
 threadsafe: true
+basic_scaling:
+  max_instances: 2
+  idle_timeout: 10s
 env_variables:
   # How often, in seconds, Prometheus scrapes this exporter.
-  PROMETHEUS_SCRAPE_PERIOD_SECONDS: 10
+  PROMETHEUS_SCRAPE_PERIOD_SECONDS: 60
 
   # HTTP Basic auth credentials used both by scraping and webhook.
   BASIC_AUTH_USERNAME: myusername

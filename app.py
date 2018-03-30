@@ -72,7 +72,7 @@ def _handle_submission(now):
             # A duration of which we can be certain the Prometheus has scraped
             # the zero valued counter. See
             # https://github.com/prometheus/prometheus/issues/3886#issuecomment-368349640
-            countdown=4 * int(os.environ['PROMETHEUS_SCRAPE_PERIOD_SECONDS']),
+            countdown=3 * int(os.environ['PROMETHEUS_SCRAPE_PERIOD_SECONDS']),
         )
 
     if action == 'Close':
