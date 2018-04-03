@@ -101,13 +101,13 @@ def scrape():
 
             if not header_sent:
                 s += "# A timer histogram of how many seconds since creation of an alert.\n"
-                s += "# HELP tink_alert_stats_alerts_created_total A counter of the number of 'Created' events/alerts.\n"
-                s += "# TYPE tink_alert_stats_alerts_created_total counter\n"
+                s += "# HELP tink_alertstats_alerts_created_total A counter of the number of 'Created' events/alerts.\n"
+                s += "# TYPE tink_alertstats_alerts_created_total counter\n"
                 header_sent = True
 
             tags = merge_two_dicts(alerttype.tags, counter.tags)
 
-            s += build_metric("tink_alert_stats_alerts_created_total", tags, counter.count)
+            s += build_metric("tink_alertstats_alerts_created_total", tags, counter.count)
 
     header_sent = False
     for alerttype in models.AlertType.query():
@@ -117,19 +117,19 @@ def scrape():
 
             if not header_sent:
                 s += "# A timer histogram of how many seconds since creation of an alert.\n"
-                s += "# HELP tink_alert_stats_action_since_created_seconds A histogram of the number of seconds an action happened since Created OpsGenie event.\n"
-                s += "# TYPE tink_alert_stats_action_since_created_seconds histogram\n"
+                s += "# HELP tink_alertstats_action_since_created_seconds A histogram of the number of seconds an action happened since Created OpsGenie event.\n"
+                s += "# TYPE tink_alertstats_action_since_created_seconds histogram\n"
                 header_sent = True
 
             tags = merge_two_dicts(alerttype.tags, counter.tags)
             tags['action'] = counter.action
 
-            s += build_metric("tink_alert_stats_action_since_created_seconds_count", tags, counter.count)
-            s += build_metric("tink_alert_stats_action_since_created_seconds_sum", tags, counter.sum)
+            s += build_metric("tink_alertstats_action_since_created_seconds_count", tags, counter.count)
+            s += build_metric("tink_alertstats_action_since_created_seconds_sum", tags, counter.sum)
 
             for bucket in counter.since_created_buckets:
                 tags['le'] = "+Inf" if bucket.le==models.MAX_INT else bucket.le
-                s += build_metric("tink_alert_stats_action_since_created_seconds_bucket", tags, bucket.count)
+                s += build_metric("tink_alertstats_action_since_created_seconds_bucket", tags, bucket.count)
 
     memcache.set('key', s, 3 * 3600)
 
