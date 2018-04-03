@@ -92,9 +92,29 @@ def scrape():
         return Response(s, mimetype='text/plain')
 
     s = ""
+
     header_sent = False
     for alerttype in models.AlertType.query():
         for counter in alerttype.get_counters():
+            if counter.action != 'Create':
+                continue
+
+            if not header_sent:
+                s += "# A timer histogram of how many seconds since creation of an alert.\n"
+                s += "# HELP tink_alert_stats_alerts_created_total A counter of the number of 'Created' events/alerts.\n"
+                s += "# TYPE tink_alert_stats_alerts_created_total counter\n"
+                header_sent = True
+
+            tags = merge_two_dicts(alerttype.tags, counter.tags)
+
+            s += build_metric("tink_alert_stats_alerts_created_total", tags, counter.count)
+
+    header_sent = False
+    for alerttype in models.AlertType.query():
+        for counter in alerttype.get_counters():
+            if counter.action == 'Create':
+                continue
+
             if not header_sent:
                 s += "# A timer histogram of how many seconds since creation of an alert.\n"
                 s += "# HELP tink_alert_stats_action_since_created_seconds A histogram of the number of seconds an action happened since Created OpsGenie event.\n"
