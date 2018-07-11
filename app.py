@@ -50,6 +50,11 @@ def _handle_submission(now):
         m.put()
     else:
         m = models.UniqueAlert.get_by_id(alertid)
+        
+    if m is None:
+        # Could happen if there were outstanding alerts when this AppEngine
+        # instance was setup, or Google had a glitch.
+        return jsonify({})
 
     alerttype = models.AlertType.get_or_insert_by_tags(m.tags)
     timediff = datetime.datetime.now() - m.created if datetime.datetime.now() > m.created else datetime.timedelta(seconds=0)
