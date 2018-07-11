@@ -3,13 +3,16 @@ from google.appengine.ext import ndb
 import hashlib
 
 
+MAX_TO_DELETE = 100
+
+
 class UniqueAlert(ndb.Model):
     created = ndb.DateTimeProperty(auto_now_add=True)
     tags = ndb.JsonProperty(required=True)
 
     @classmethod
     def expire_older_than(cls, date):
-        ndb.delete_multi(cls.query(cls.created < date).iter(keys_only=True))
+        ndb.delete_multi([key for key in cls.query(cls.created < date).fetch(MAX_TO_DELETE, keys_only=True)])
 
 
 class AlertType(ndb.Model):
@@ -29,7 +32,7 @@ class AlertType(ndb.Model):
 
     @classmethod
     def expire_older_than(cls, date):
-        ndb.delete_multi(cls.query(cls.created < date).iter(keys_only=True))
+        ndb.delete_multi([key for key in cls.query(cls.created < date).fetch(MAX_TO_DELETE, keys_only=True)])
 
     @classmethod
     def all(cls):
@@ -41,7 +44,7 @@ class AlertType(ndb.Model):
 
     @classmethod
     def _pre_delete_hook(cls, key):
-        ndb.delete_multi(AlertTypeCounter.query(alerttype=key, keys_only=True))
+        ndb.delete_multi(AlertTypeCounter.query(AlertTypeCounter.alerttype == key).iter(keys_only=True))
 
     @ndb.transactional
     def incr(self, action, duration_since_created, tags):
