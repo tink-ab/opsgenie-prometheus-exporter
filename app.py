@@ -135,6 +135,8 @@ def scrape():
     #       string output from each alerttype individually.
     memcache.set('key', s, 3 * 3600)
 
+    # TODO: See if we can stream the output instead up building up everything
+    #       in memory.
     return Response(s, mimetype='text/plain')
 
 
