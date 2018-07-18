@@ -131,8 +131,12 @@ def scrape():
                 tags['le'] = "+Inf" if bucket.le==models.MAX_INT else bucket.le
                 s += build_metric("tink_alertstats_action_since_created_seconds_bucket", tags, bucket.count)
 
+    # TODO: This fails if s is larger than 1 MB. We should likely cache the
+    #       string output from each alerttype individually.
     memcache.set('key', s, 3 * 3600)
 
+    # TODO: See if we can stream the output instead up building up everything
+    #       in memory.
     return Response(s, mimetype='text/plain')
 
 
